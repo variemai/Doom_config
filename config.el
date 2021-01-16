@@ -2,7 +2,7 @@
 
 ;; Place your private configuration here! Remember, you do not need to run 'doom
 ;; sync' after modifying this file!
-
+;; I SHOULD PUT THIS IN ORG BUT I AM TOO LAZY TO DO SO
 
 ;; Some functionality uses this to identify you, e.g. GPG configuration, email
 ;; clients, file templates and snippets.
@@ -19,9 +19,13 @@
 ;; font string. You generally only need these two:
 ;; (setq doom-font (font-spec :family "monospace" :size 12 :weight 'semi-light)
 ;;       doom-variable-pitch-font (font-spec :family "sans" :size 13))
+(require 'org-bullets)
+(use-package org-bullets
+  :hook (org-mode . org-bullets-mode))
 
+;; (setq org-bullets-mode 1)
 (setq doom-font (font-spec :family "JetBrains Mono" :size 20 :weight 'Medium)
-      doom-variable-pitch-font (font-spec :family "Jet Brains Mono" :size 20))
+      doom-variable-pitch-font (font-spec :family "JetBrains Mono" :size 20))
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
@@ -34,7 +38,6 @@
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
 (setq display-line-numbers-type t)
-
 
 ;; Here are some additional functions/macros that could help you configure Doom:
 ;;
@@ -52,15 +55,90 @@
 ;;
 ;; You can also try 'gd' (or 'C-c c d') to jump to their definition and see how
 ;; they are implemented.
-;;use zsh s-f key to open shell
-(defvar my-term-shell "/bin/zsh")
-  (defadvice ansi-term (before force-bash)
-    (interactive (list my-term-shell)))
-  (ad-activate 'ansi-term)
-(global-set-key (kbd "C-x t") 'ansi-term)
+
+(require 'evil-multiedit)
+;; Highlights all matches of the selection in the buffer.
+(define-key evil-visual-state-map "R" 'evil-multiedit-match-all)
+
+;; Match the word under cursor (i.e. make it an edit region). Consecutive presses will
+;; incrementally add the next unmatched match.
+(define-key evil-normal-state-map (kbd "M-d") 'evil-multiedit-match-and-next)
+;; Match selected region.
+(define-key evil-visual-state-map (kbd "M-d") 'evil-multiedit-match-and-next)
+;; Insert marker at point
+(define-key evil-insert-state-map (kbd "M-d") 'evil-multiedit-toggle-marker-here)
+
+;; Same as M-d but in reverse.
+(define-key evil-normal-state-map (kbd "M-D") 'evil-multiedit-match-and-prev)
+(define-key evil-visual-state-map (kbd "M-D") 'evil-multiedit-match-and-prev)
+
+;; OPTIONAL: If you prefer to grab symbols rather than words, use
+;; `evil-multiedit-match-symbol-and-next` (or prev).
+
+;; Restore the last group of multiedit regions.
+(define-key evil-visual-state-map (kbd "C-M-D") 'evil-multiedit-restore)
+
+;; RET will toggle the region under the cursor
+(define-key evil-multiedit-state-map (kbd "RET") 'evil-multiedit-toggle-or-restrict-region)
+
+;; ...and in visual mode, RET will disable all fields outside the selected region
+(define-key evil-motion-state-map (kbd "RET") 'evil-multiedit-toggle-or-restrict-region)
+
+;; For moving between edit regions
+(define-key evil-multiedit-state-map (kbd "C-n") 'evil-multiedit-next)
+(define-key evil-multiedit-state-map (kbd "C-p") 'evil-multiedit-prev)
+(define-key evil-multiedit-insert-state-map (kbd "C-n") 'evil-multiedit-next)
+(define-key evil-multiedit-insert-state-map (kbd "C-p") 'evil-multiedit-prev)
+
+;; Ex command that allows you to invoke evil-multiedit with a regular expression, e.g.
+(evil-ex-define-cmd "ie[dit]" 'evil-multiedit-ex-match)
+
+;; Hotkeys for multiple edit
+;; D: clear the region
+;; C: clear to end-of-region and go into insert mode
+;; A: go into insert mode at end-of-region
+;; I: go into insert mode at start-of-region
+;; V: select the region
+;; $: go to end-of-region
+;; 0/^: go to start-of-region
+;; gg/G: go to the first/last region
+
+;;org mode
+(setq org-use-sub-superscripts nil)
+(setq org-latex-to-pdf-process
+  '("xelatex -interaction nonstopmode %f"
+     "xelatex -interaction nonstopmode %f")) ;; for multiple passes
+
+;; (defvar my-term-shell "/bin/zsh")
+;;   (defadvice ansi-term (before force-bash)
+;;     (interactive (list my-term-shell)))
+;;   (ad-activate 'ansi-term)
+;; (global-set-key (kbd "C-x t") 'vterm)
+
+(global-set-key (kbd "C-x t") 'eshell)
+
+;; (defun +vterm/split_right (arg)
+;;   "Open a terminal buffer in the current window at project root.
+
+;; If prefix ARG is non-nil, cd into `default-directory' instead of project root."
+;;   (interactive "P")
+;;   (unless (fboundp 'module-load)
+;;     (user-error "Your build of Emacs lacks dynamic modules support and cannot load vterm"))
+;;   (require 'vterm)
+;;   ;; This hack forces vterm to redraw, fixing strange artefacting in the tty.
+;;   (select-window (split-window-horizontally))
+;;   ((pop-to-buffer "*scratch*"))
+;;   (let* ((project-root (or (doom-project-root) default-directory))
+;;          (default-directory
+;;            (if arg
+;;                default-directory
+;;              project-root))
+;;          display-buffer-alist)
+;;     (setenv "PROOT" project-root)
+;;     (vterm)
+;;     (+vterm--change-directory-if-remote)))
 
 ;;fullscreen at startup
-
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -68,7 +146,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-selected-packages
-   '(pinentry evil-mu4e mu4e-alert mu4e-maildirs-extension mu4e-overview flycheck))
+   '(evil-mu4e mu4e-alert mu4e-maildirs-extension mu4e-overview flycheck))
  '(send-mail-function 'smtpmail-send-it))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -76,62 +154,62 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  )
-(require 'rtags)
-(add-hook 'c-mode-hook 'rtags-start-process-unless-running)
-(add-hook 'c++-mode-hook 'rtags-start-process-unless-running)
-
-(use-package rtags
-  :ensure t
-  :hook (c++-mode . rtags-start-process-unless-running)
-  :config (setq rtags-completions-enabled t
-                rtags-path "/home/vardas/sources/rtags/src/rtags.el"
-                rtags-rc-binary-name "/home/vardas/.local/bin/rc"
-                rtags-use-helm t
-                rtags-rdm-binary-name "/home/vardas/.local/bin/rdm")
-  :bind (("C-c E" . rtags-find-symbol)
-  ("C-c e" . rtags-find-symbol-at-point)
-  ("C-c O" . rtags-find-references)
-  ("C-c o" . rtags-find-references-at-point)
-  ("C-c s" . rtags-find-file)
-  ("C-c v" . rtags-find-virtuals-at-point)
-  ("C-c F" . rtags-fixit)
-  ("C-c f" . rtags-location-stack-forward)
-  ("C-c b" . rtags-location-stack-back)
-  ("C-c n" . rtags-next-match)
-  ("C-c p" . rtags-previous-match)
-  ("C-c P" . rtags-preprocess-file)
-  ("C-c R" . rtags-rename-symbol)
-  ("C-c x" . rtags-show-rtags-buffer)
-  ("C-c T" . rtags-print-symbol-info)
-  ("C-c t" . rtags-symbol-type)
-  ("C-c I" . rtags-include-file)
-  ("C-c i" . rtags-get-include-file-for-symbol)))
-(setq rtags-display-result-backend 'helm)
+;; (require 'rtags)
+;; (add-hook 'c-mode-hook 'rtags-start-process-unless-running)
+;; (add-hook 'c++-mode-hook 'rtags-start-process-unless-running)
+;; (use-package! rtags
+;;   :hook (c++-mode . rtags-start-process-unless-running)
+;;   :hook (c-mode . rtags-start-process-unless-running)
+;;   :config (setq rtags-completions-enabled t
+;;                 rtags-path "/home/vardas/sources/rtags/src/rtags.el"
+;;                 rtags-rc-binary-name "/home/vardas/.local/bin/rc"
+;;                 ;;rtags-use-helm t
+;;                 rtags-rdm-binary-name "/home/vardas/.local/bin/rdm")
+;;   :bind (("C-c E" . rtags-find-symbol)
+;;   ("C-c e" . rtags-find-symbol-at-point)
+;;   ("C-c O" . rtags-find-references)
+;;   ("C-c o" . rtags-find-references-at-point)
+;;   ("C-c s" . rtags-find-file)
+;;   ("C-c v" . rtags-find-virtuals-at-point)
+;;   ("C-c F" . rtags-fixit)
+;;   ("C-c f" . rtags-location-stack-forward)
+;;   ("C-c b" . rtags-location-stack-back)
+;;   ("C-c n" . rtags-next-match)
+;;   ("C-c p" . rtags-previous-match)
+;;   ("C-c P" . rtags-preprocess-file)
+;;   ("C-c R" . rtags-rename-symbol)
+;;   ("C-c x" . rtags-show-rtags-buffer)
+;;   ("C-c T" . rtags-print-symbol-info)
+;;   ("C-c t" . rtags-symbol-type)
+;;   ("C-c I" . rtags-include-file)
+;;   ("C-c i" . rtags-get-include-file-for-symbol)))
+;; (setq rtags-display-result-backend 'ivy)
+;; ;; Use rtags for auto-completion.
+;; (require 'company-rtags)
+;; (setq company-async-timeout 5)
+;; (set-company-backend! 'c-mode-hook '(company-rtags))
+;;  (rtags-enable-standard-keybindings)
+;; (rtags-diagnostics)
+;; (setq company-idle-delay 0)
+;; (define-key c-mode-base-map (kbd "M-p") 'company-rtags)
+;; (add-hook 'c++-mode-hook 'flycheck-mode)
+;; (add-hook 'c-mode-hook 'flycheck-mode)
+;; (add-hook 'c-mode-hook 'lsp-deferred)
+;; (add-hook 'c++-mode-hook 'lsp-deferred)
+(global-set-key (kbd "C-c e") 'lsp-find-definition)
+(global-set-key (kbd "C-c r") 'lsp-find-references)
+(global-set-key (kbd "C-c d") 'lsp-find-declaration)
+(global-set-key (kbd "C-c t") 'lsp-find-implementation)
+(global-set-key (kbd "C-c f") 'lsp-find-type-definition)
 (setq  auth-source-debug t)
 (setq auth-sources '((:source "~/.authinfo.gpg")))
 (require 'pinentry)
 (require 'mu4e)
 (require 'smtpmail)
-;; General settings for mu4e
-;; (setq mail-user-agent 'mu4e-user-agent)
-;; (defun my-mu4e-sent-folder-function (msg)
-;;   "Set the sent folder for the current message."
-;;   (let ((from-address (message-field-value "From"))
-;;         (to-address (message-field-value "To")))
-;;     (cond
-;;      ((string-match "johnvardas@hotmail.com" from-address) "/hotmail/Sent")
-;;       ;; (if (member* to-address my-mu4e-mailing-lists
-;;       ;;              :test #'(lambda (x y)
-;;       ;;                        (string-match (car y) x)))
-;;       ;;     "/Trash"
-;;       ;;   "/Account1/Sent"))
-;;      ((string-match "vardas@ics.forth.gr" from-address)
-;;       "/forth/Sent")
-;;      (t (mu4e-ask-maildir-check-exists "Save message to maildir: ")))))
 
 
 
-;; (setq mu4e-get-mail-command "mbsync -a")
+ ;;(setq mu4e-get-mail-command (format "INSIDE_EMACS=%s mbsync -a" emacs-version))
 (setq mu4e-get-mail-command (format "INSIDE_EMACS=%s mbsync -a" emacs-version)
       epa-pinentry-mode 'ask)
 (pinentry-start)
@@ -146,11 +224,14 @@
 (setq message-kill-buffer-on-exit t)
 (setq mu4e-compose-dont-reply-to-self t)
 (setq mu4e-view-show-addresses 't)
+;; (setq browse-url-browser-function 'browse-url-generic)
+;; (setq browse-url-generic-program "qutebrowser")
+
 (defun my-mu4e-html2text (msg)
 ;;My html2text function; shows short message inline, show
 ;;long messages in some external browser (see `browse-url-generic-program')
   (let ((html (or (mu4e-message-field msg :body-html) "")))
-    (if (> (length html) 20000)
+    (if (> (length html) 8000)
       (progn
 	(mu4e-action-view-in-browser msg)
 	"[Viewing message in external browser]")
@@ -184,7 +265,7 @@
                    (smtpmail-smtp-service . 465)
                    (smtpmail-debug-info . t)
                    (smtpmail-debug-verbose . t)
-                   (mu4e-sent-messages-behavior 'sent)
+                   ;; (mu4e-sent-messages-behavior 'sent)
                    (mu4e-drafts-folder . "/forth/Drafts")
                    (mu4e-sent-folder   . "/forth/Sent")
                    (mu4e-refile-folder . "/forth/Archive")
@@ -210,17 +291,20 @@
                 (smtpmail-smtp-service . 587)
                 ;; (smtpmail-debug-info . t)
                 ;; (smtpmail-debug-verbose . t)
-                (setq mu4e-sent-messages-behavior 'delete)
+                ;; (setq mu4e-sent-messages-behavior 'sent)
                 (mu4e-trash-folder  . "/hotmail/Deleted")
                 (mu4e-drafts-folder . "/hotmail/Drafts")
                 (mu4e-sent-folder   . "/hotmail/Sent")
                 (mu4e-refile-folder . "/hotmail/Archive")
                 )))
       )
+(add-to-list 'mu4e-view-actions '("ViewInBrowser" . mu4e-action-view-in-browser) t)
 (require 'mu4e-alert)
 (mu4e-alert-set-default-style 'libnotify)
 (add-hook 'after-init-hook 'mu4e-alert-enable-notifications)
+
 (require 'beacon)
+(setq epa-pinentry-mode 'loopback)
 (setq beacon-mode 1)
 ;; Diary configs
 (setq appt-active 1)
@@ -229,3 +313,20 @@
 (setq appt-message-warning-time 12)
 (setq appt-display-interval 4)
 (setq appt-audible 1)
+
+;; (require `helm-config)
+;; (helm-mode 1)
+;; (setq helm-autoresize-max-height 100)
+;; (setq helm-autoresize-min-height 20)
+;; (helm-autoresize-mode 1)
+;; (global-set-key (kbd "C-c h") 'helm-command-prefix)
+;; (global-unset-key (kbd "C-x c"))
+
+;; (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action) ; rebind tab to run persistent action
+;; (define-key helm-map (kbd "C-i") 'helm-execute-persistent-action) ; make TAB work in terminal
+;; (define-key helm-map (kbd "C-z")  'helm-select-action) ; list actions using C-z
+;;                                         ; (global-set-key (kbd "C-c h") 'helm-command-prefix)
+;; (global-set-key (kbd "C-x C-f") 'helm-find-files)
+;; (global-set-key (kbd "C-x b") 'helm-mini)
+;; (setq helm-M-x-fuzzy-match t) ;; optional fuzzy matching for helm-M-x
+;; (add-hook 'org-mode-hook (lambda () (org-bullets-mode)))
