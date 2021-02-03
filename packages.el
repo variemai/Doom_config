@@ -12,6 +12,7 @@
 (package! evil-mu4e)
 (package! mu4e-overview)
 (package! beacon)
+(package! alert)
 ;; (package! rtags)
 (package! pinentry)
 (package! org-bullets)
