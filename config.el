@@ -24,8 +24,8 @@
   :hook (org-mode . org-bullets-mode))
 
 ;; (setq org-bullets-mode 1)
-(setq doom-font (font-spec :family "JetBrains Mono" :size 20 :weight 'Medium)
-      doom-variable-pitch-font (font-spec :family "JetBrains Mono" :size 20))
+(setq doom-font (font-spec :family "JetBrains Mono" :size 18 :weight 'Medium)
+      doom-variable-pitch-font (font-spec :family "JetBrains Mono" :size 18))
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
@@ -206,15 +206,11 @@
 (require 'pinentry)
 (require 'mu4e)
 (require 'smtpmail)
-(require 'alert)
-(require 'log4e)
 
-(require 'mu4e-alert)
-(mu4e-alert-set-default-style 'libnonitfy)
-(add-hook 'after-init-hook #'mu4e-alert-enable-notifications)
-(setq mu4e-alert-notify-repeated-mails t)
-(mu4e-alert-notify-unread-mail-async)
-(add-hook 'after-init-hook #'mu4e-alert-enable-mode-line-display)
+;;(alert (format "hello, %s" name) 'notify 'quiet 0 'nocolor 'log)
+
+;; (setq mu4e-alert-notify-repeated-mails t)
+;; (mu4e-alert-notify-unread-mail-async)
  ;;(setq mu4e-get-mail-command (format "INSIDE_EMACS=%s mbsync -a" emacs-version))
 (setq mu4e-get-mail-command (format "INSIDE_EMACS=%s mbsync -a" emacs-version)
       epa-pinentry-mode 'ask)
@@ -306,6 +302,11 @@
       )
 (add-to-list 'mu4e-view-actions '("ViewInBrowser" . mu4e-action-view-in-browser) t)
 
+(require 'mu4e-alert)
+(mu4e-alert-set-default-style 'libnotify)
+(add-hook 'after-init-hook #'mu4e-alert-enable-notifications)
+(add-hook 'after-init-hook #'mu4e-alert-enable-mode-line-display)
+
 (require 'beacon)
 (setq epa-pinentry-mode 'loopback)
 (setq beacon-mode 1)
@@ -316,7 +317,7 @@
 (setq appt-message-warning-time 12)
 (setq appt-display-interval 4)
 (setq appt-audible 1)
-
+(require 'org-make-toc)
 ;; (require `helm-config)
 ;; (helm-mode 1)
 ;; (setq helm-autoresize-max-height 100)
