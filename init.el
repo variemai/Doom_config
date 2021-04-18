@@ -82,7 +82,7 @@
        :checkers
        ;;syntax              ; tasing you for every semicolon you forget
        spell             ; tasing you for misspelling mispelling
-       ;;grammar           ; tasing grammar mistake every you make
+       grammar           ; tasing grammar mistake every you make
 
        :tools
        ;;ansible
@@ -175,6 +175,6 @@
        ;;twitter           ; twitter client https://twitter.com/vnought
 
        :config
-       ;;literate
+       literate
        (default +bindings +smartparens))
 (setq frame-resize-pixelwise t)
