@@ -1,22 +1,22 @@
-;; [[file:../../../tmp/config.org.LfdEc3::*turn on lexical binding][turn on lexical binding:1]]
+;; [[file:../../../tmp/config.org.JHrBcJ::*turn on lexical binding][turn on lexical binding:1]]
 ;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
 ;; turn on lexical binding:1 ends here
 
-;; [[file:../../../tmp/config.org.LfdEc3::*Linenum][Linenum:1]]
+;; [[file:../../../tmp/config.org.JHrBcJ::*Linenum][Linenum:1]]
 (setq display-line-numbers-type 't)
 ;; Linenum:1 ends here
 
-;; [[file:../../../tmp/config.org.LfdEc3::*Org Bullets][Org Bullets:1]]
+;; [[file:../../../tmp/config.org.JHrBcJ::*Org Bullets][Org Bullets:1]]
 (require 'org-bullets)
 (use-package org-bullets
   :hook (org-mode . org-bullets-mode))
 ;; Org Bullets:1 ends here
 
-;; [[file:../../../tmp/config.org.LfdEc3::*Org Folder][Org Folder:1]]
+;; [[file:../../../tmp/config.org.JHrBcJ::*Org Folder][Org Folder:1]]
 (setq org-directory "~/org/")
 ;; Org Folder:1 ends here
 
-;; [[file:../../../tmp/config.org.LfdEc3::*Org to Latex][Org to Latex:1]]
+;; [[file:../../../tmp/config.org.JHrBcJ::*Org to Latex][Org to Latex:1]]
 (setq org-use-sub-superscripts nil)
 (setq org-latex-to-pdf-process
   '("xelatex -interaction nonstopmode %f"
@@ -26,7 +26,11 @@
 (require 'org-make-toc)
 ;; Org to Latex:1 ends here
 
-;; [[file:../../../tmp/config.org.LfdEc3::*Font][Font:1]]
+;; [[file:../../../tmp/config.org.JHrBcJ::*PDF viewer][PDF viewer:1]]
+(setq +latex-viewers '(okular pdf-tools))
+;; PDF viewer:1 ends here
+
+;; [[file:../../../tmp/config.org.JHrBcJ::*Font][Font:1]]
 ;; Doom exposes five (optional) variables for controlling fonts in Doom. Here
 ;; are the three important ones:
 ;;
@@ -39,27 +43,27 @@
 ;; font string. You generally only need these two:
 ;; (setq doom-font (font-spec :family "monospace" :size 12 :weight 'semi-light)
 ;;       doom-variable-pitch-font (font-spec :family "sans" :size 13))
-(setq doom-font (font-spec :family "IBM Plex Mono SemiBold" :size 19)
-      doom-variable-pitch-font (font-spec :family "IBM Plex Mono SemiBold" :size 19))
+(setq doom-font (font-spec :family "Iosevka Medium" :size 19)
+      doom-variable-pitch-font (font-spec :family "Roboto" :size 19))
 ;; Font:1 ends here
 
-;; [[file:../../../tmp/config.org.LfdEc3::*Theme][Theme:1]]
+;; [[file:../../../tmp/config.org.JHrBcJ::*Theme][Theme:1]]
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
  (setq doom-theme 'doom-vibrant)
 ;; Theme:1 ends here
 
-;; [[file:../../../tmp/config.org.LfdEc3::*Fullscreen][Fullscreen:1]]
+;; [[file:../../../tmp/config.org.JHrBcJ::*Fullscreen][Fullscreen:1]]
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
 ;; Fullscreen:1 ends here
 
-;; [[file:../../../tmp/config.org.LfdEc3::*Beacon][Beacon:1]]
+;; [[file:../../../tmp/config.org.JHrBcJ::*Beacon][Beacon:1]]
 (require 'beacon)
 (setq beacon-mode 1)
 ;; Beacon:1 ends here
 
-;; [[file:../../../tmp/config.org.LfdEc3::*Evil Mode][Evil Mode:1]]
+;; [[file:../../../tmp/config.org.JHrBcJ::*Evil Mode][Evil Mode:1]]
 (require 'evil-multiedit)
 ;; Highlights all matches of the selection in the buffer.
 (define-key evil-visual-state-map "R" 'evil-multiedit-match-all)
@@ -108,11 +112,11 @@
 ;; gg/G: go to the first/last region
 ;; Evil Mode:1 ends here
 
-;; [[file:../../../tmp/config.org.LfdEc3::*Eshell][Eshell:1]]
+;; [[file:../../../tmp/config.org.JHrBcJ::*Eshell][Eshell:1]]
 (global-set-key (kbd "C-x t") 'eshell)
 ;; Eshell:1 ends here
 
-;; [[file:../../../tmp/config.org.LfdEc3::*Lsp][Lsp:1]]
+;; [[file:../../../tmp/config.org.JHrBcJ::*Lsp][Lsp:1]]
 (global-set-key (kbd "C-c e") 'lsp-find-definition)
 (global-set-key (kbd "C-c r") 'lsp-find-references)
 (global-set-key (kbd "C-c d") 'lsp-find-declaration)
@@ -120,7 +124,7 @@
 (global-set-key (kbd "C-c f") 'lsp-find-type-definition)
 ;; Lsp:1 ends here
 
-;; [[file:../../../tmp/config.org.LfdEc3::*Mail and Mu4e][Mail and Mu4e:1]]
+;; [[file:../../../tmp/config.org.JHrBcJ::*Mail and Mu4e][Mail and Mu4e:1]]
 (setq  auth-source-debug t)
 (setq auth-sources '((:source "~/.authinfo.gpg")))
 (require 'pinentry)
@@ -206,9 +210,9 @@
                 ( smtpmail-smtp-user . "johnvardas@hotmail.com")
                 (gnutls-min-prime-bits . 256)
                 (smtpmail-stream-type . starttls)
-                (smtpmail-starttls-credentials . (("smtp-mail.outlook.com" 587 nil nil)))
-                (smtpmail-default-smtp-server . "smtp-mail.outlook.com")
-                (smtpmail-smtp-server . "smtp-mail.outlook.com")
+                (smtpmail-starttls-credentials . (("smtp.office365.com" 587 nil nil)))
+                (smtpmail-default-smtp-server . "smtp.office365.com")
+                (smtpmail-smtp-server . "smtp.office365.com")
 	              (smtpmail-auth-credentials  . '(expand-file-name "~/.authinfo.gpg") )
                 (smtpmail-smtp-service . 587)
                 ;; (smtpmail-debug-info . t)
@@ -223,7 +227,7 @@
 (add-to-list 'mu4e-view-actions '("ViewInBrowser" . mu4e-action-view-in-browser) t)
 ;; Mail and Mu4e:1 ends here
 
-;; [[file:../../../tmp/config.org.LfdEc3::*Mu4e-alert][Mu4e-alert:1]]
+;; [[file:../../../tmp/config.org.JHrBcJ::*Mu4e-alert][Mu4e-alert:1]]
 (require 'mu4e-alert)
 (mu4e-alert-set-default-style 'libnotify)
 (add-hook 'after-init-hook #'mu4e-alert-enable-notifications)
@@ -231,7 +235,7 @@
 (setq epa-pinentry-mode 'loopback)
 ;; Mu4e-alert:1 ends here
 
-;; [[file:../../../tmp/config.org.LfdEc3::*Diary][Diary:1]]
+;; [[file:../../../tmp/config.org.JHrBcJ::*Diary][Diary:1]]
 ;; Diary configs
 (setq appt-active 1)
 (setq diary-number-of-entries 6)
@@ -240,3 +244,8 @@
 (setq appt-display-interval 4)
 (setq appt-audible 1)
 ;; Diary:1 ends here
+
+;; [[file:../../../tmp/config.org.JHrBcJ::*Flyspell][Flyspell:1]]
+(add-hook 'text-mode-hook 'flyspell-mode)
+(add-hook 'org-mode-hook  'flyspell-mode)
+;; Flyspell:1 ends here
