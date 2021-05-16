@@ -10,7 +10,6 @@
 #+BEGIN_SRC emacs-lisp
 (setq display-line-numbers-type 't)
 #+END_SRC
-
 * Org
 ** Org Bullets
 #+BEGIN_SRC emacs-lisp
@@ -24,6 +23,7 @@
 #+END_SRC
 ** Org to Latex
 #+BEGIN_SRC emacs-lisp
+
 (setq org-use-sub-superscripts nil)
 (setq org-latex-to-pdf-process
   '("xelatex -interaction nonstopmode %f"
@@ -35,6 +35,19 @@
 * PDF viewer
 #+begin_src emacs-lisp
 (setq +latex-viewers '(okular pdf-tools))
+(add-to-list 'org-file-apps '("\\.pdf" . "okular %s"))
+(after! tex
+  (add-to-list 'TeX-view-program-list '("Okular" "evince %o"))
+  (add-to-list 'TeX-view-program-selection '(output-pdf "Okular")))
+#+end_src
+* Latex
+** Compile
+#+begin_src emacs-lisp
+(setq TeX-save-query nil
+      TeX-show-compilation t
+      TeX-command-extra-options "-shell-escape")
+(after! latex
+  (add-to-list 'TeX-command-list '("XeLaTeX" "%`xelatex%(mode)%' %t" TeX-run-TeX nil t)))
 #+end_src
 * Appearance
 ** Font
@@ -51,8 +64,11 @@
 ;; font string. You generally only need these two:
 ;; (setq doom-font (font-spec :family "monospace" :size 12 :weight 'semi-light)
 ;;       doom-variable-pitch-font (font-spec :family "sans" :size 13))
-(setq doom-font (font-spec :family "Iosevka Medium" :size 19)
-      doom-variable-pitch-font (font-spec :family "Roboto" :size 19))
+(setq doom-font (font-spec :family "Iosevka Medium" :size 22)
+      doom-big-font (font-spec :family "Iosevka Medium" :size 34)
+      doom-variable-pitch-font (font-spec :family "Hack" :size 19)
+      doom-serif-font (font-spec :family "IBM Plex Mono" :weight 'light)
+      )
 #+END_SRC
 ** Theme
 #+BEGIN_SRC emacs-lisp
