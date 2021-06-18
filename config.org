@@ -64,8 +64,8 @@
 ;; font string. You generally only need these two:
 ;; (setq doom-font (font-spec :family "monospace" :size 12 :weight 'semi-light)
 ;;       doom-variable-pitch-font (font-spec :family "sans" :size 13))
-(setq doom-font (font-spec :family "Iosevka Medium" :size 22)
-      doom-big-font (font-spec :family "Iosevka Medium" :size 34)
+(setq doom-font (font-spec :family "Iosevka SS13 Medium Extended" :size 19)
+      doom-big-font (font-spec :family "Iosevka SS13 Medium Extended" :size 30)
       doom-variable-pitch-font (font-spec :family "Hack" :size 19)
       doom-serif-font (font-spec :family "IBM Plex Mono" :weight 'light)
       )
@@ -75,7 +75,7 @@
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
- (setq doom-theme 'doom-vibrant)
+ (setq doom-theme 'doom-dracula)
 #+END_SRC
 ** Fullscreen
 #+BEGIN_SRC emacs-lisp
@@ -162,11 +162,13 @@
 
 ;; (setq mu4e-alert-notify-repeated-mails t)
 ;; (mu4e-alert-notify-unread-mail-async)
- ;;(setq mu4e-get-mail-command (format "INSIDE_EMACS=%s mbsync -a" emacs-version))
-(setq mu4e-get-mail-command (format "INSIDE_EMACS=%s mbsync -a" emacs-version)
-      epa-pinentry-mode 'ask)
+ (setq
+  mu4e-get-mail-command (format "INSIDE_EMACS=%s mbsync -a" emacs-version)
+  epa-pinentry-mode 'ask
+  mu4e-update-interval 120)
+;; (setq mu4e-get-mail-command (format "INSIDE_EMACS=%s mbsync -a" emacs-version)
+;;       epa-pinentry-mode 'ask)
 (pinentry-start)
-(setq mu4e-update-interval 120)
 (setq mu4e-headers-auto-update t)
 (setq mu4e-compose-signature-auto-include nil)
 (setq mu4e-maildir (expand-file-name "~/Maildir"))
@@ -179,7 +181,8 @@
 (setq mu4e-view-show-addresses 't)
 ;; (setq browse-url-browser-function 'browse-url-generic)
 ;; (setq browse-url-generic-program "qutebrowser")
-
+(setq mu4e-compose-format-flowed t)
+(remove-hook! 'mu4e-compose-pre-hook #'org-msg-mode)
 (defun my-mu4e-html2text (msg)
 ;;My html2text function; shows short message inline, show
 ;;long messages in some external browser (see `browse-url-generic-program')
@@ -249,8 +252,33 @@
                 (mu4e-drafts-folder . "/hotmail/Drafts")
                 (mu4e-sent-folder   . "/hotmail/Sent")
                 (mu4e-refile-folder . "/hotmail/Archive")
-                )))
-      )
+                ))
+
+      (make-mu4e-context
+       :name "TUWien"
+       :enter-func (lambda () (mu4e-message "Entering TUWien context"))
+       :leave-func (lambda () (mu4e-message "Leaving TUWien context"))
+       :match-func (lambda (msg) (when msg (mu4e-message-contact-field-matches
+                                            msg '(:from :to :cc :bcc) "vardas@par.tuwien.ac.at")))
+       :vars '( ( user-mail-address . "vardas@par.tuwien.ac.at")
+                ( user-full-name . "Ioannis Vardas")
+                ( message-send-mail-function . smtpmail-send-it )
+                ( smtpmail-smtp-user . "ivardas")
+                (gnutls-min-prime-bits . 256)
+                (smtpmail-stream-type . starttls)
+                (smtpmail-starttls-credentials . (("mail.intern.tuwien.ac.at" 587 nil nil)))
+                (smtpmail-default-smtp-server . "mail.intern.tuwien.ac.at")
+                (smtpmail-smtp-server . "mail.intern.tuwien.ac.at")
+	              (smtpmail-auth-credentials  . '(expand-file-name "~/.authinfo.gpg") )
+                (smtpmail-smtp-service . 587)
+                ;; (smtpmail-debug-info . t)
+                ;; (smtpmail-debug-verbose . t)
+                (setq mu4e-sent-messages-behavior 'sent)
+                (mu4e-trash-folder  . "/TUWien/Deleted")
+                (mu4e-drafts-folder . "/TUWien/Drafts")
+                (mu4e-sent-folder   . "/TUWien/Sent Items")
+                (mu4e-refile-folder . "/TUWien/Archive")
+            ))))
 (add-to-list 'mu4e-view-actions '("ViewInBrowser" . mu4e-action-view-in-browser) t)
 #+END_SRC
 ** Mu4e-alert
@@ -259,8 +287,28 @@
 (mu4e-alert-set-default-style 'libnotify)
 (add-hook 'after-init-hook #'mu4e-alert-enable-notifications)
 (add-hook 'after-init-hook #'mu4e-alert-enable-mode-line-display)
-(setq epa-pinentry-mode 'loopback)
+;; (setq epa-pinentry-mode 'loopback)
 #+END_SRC
+** Mu4e-signature
+#+begin_src emacs-lisp
+(defun my-mu4e-choose-signature ()
+  "Insert one of a number of sigs"
+  (interactive)
+  (let ((message-signature
+          (mu4e-read-option "Signature:"
+            '(("formal" .
+              (concat
+           "Ioannis Vardas\n"
+           "Research Group for Parallel Computing\nFaculty of Informatics\nTechnical University of Vienna\n"
+           "T: +43-(1)-58801-191415"))
+               ("informal" .
+              "Ioannis\n")))))
+    (message-insert-signature)))
+
+(add-hook 'mu4e-compose-mode-hook
+          (lambda () (local-set-key (kbd "C-c C-w") #'my-mu4e-choose-signature)))
+#+end_src
+
 * Diary
 #+BEGIN_SRC emacs-lisp
 ;; Diary configs
