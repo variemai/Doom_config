@@ -16,6 +16,7 @@
 (package! pinentry)
 (package! org-bullets)
 (package! evil-multiedit)
+(package! flymake-python-pyflakes)
 ;; (package! rtags)
 ;; (package! company-rtags)
 ;; (package! flycheck-rtags :disable t)
