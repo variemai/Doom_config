@@ -17,6 +17,7 @@
 (package! org-bullets)
 (package! evil-multiedit)
 (package! flymake-python-pyflakes)
+(package! exec-path-from-shell)
 ;; (package! rtags)
 ;; (package! company-rtags)
 ;; (package! flycheck-rtags :disable t)

@@ -66,7 +66,7 @@
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
- (setq doom-theme 'doom-Iosvkem)
+ (setq doom-theme 'doom-vibrant)
 ;; Theme:1 ends here
 
 ;; [[file:config.org::*Fullscreen][Fullscreen:1]]
@@ -129,6 +129,8 @@
 
 ;; [[file:config.org::*Eshell][Eshell:1]]
 (global-set-key (kbd "C-x t") 'eshell)
+(when (memq window-system '(mac ns x))
+  (exec-path-from-shell-initialize))
 ;; Eshell:1 ends here
 
 ;; [[file:config.org::*Lsp][Lsp:1]]
@@ -347,15 +349,3 @@
 (after! lsp-python-ms
   (set-lsp-priority! 'mspyls 1))
 ;; Python:1 ends here
-
-;; [[file:config.org::*Flycheck][Flycheck:1]]
-(add-hook 'flycheck-after-syntax-check-hook
-          (lambda  ()
-            (if flycheck-current-errors
-                (flycheck-list-errors)
-              (when (get-buffer "*Flycheck errors*")
-                (switch-to-buffer "*Flycheck errors*")
-                (kill-buffer (current-buffer))
-                (delete-window)))))
-(add-hook 'python-mode-hook 'flymake-python-pyflakes-load)
-;; Flycheck:1 ends here
