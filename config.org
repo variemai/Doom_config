@@ -62,10 +62,13 @@
 ;;
 ;; They all accept either a font-spec, font string ("Input Mono-12"), or xlfd
 ;; font string. You generally only need these two:
-;; (setq doom-font (font-spec :family "monospace" :size 12 :weight 'semi-light)
-;;       doom-variable-pitch-font (font-spec :family "sans" :size 13))
-(setq doom-font (font-spec :family "Iosevka SS13 Medium Extended" :size 19)
-      doom-big-font (font-spec :family "Iosevka SS13 Medium Extended" :size 30)
+;; (setq doom-font (font-spec :family "Iosevka SS13 Medium Extended" :size 19)
+;;       doom-big-font (font-spec :family "Iosevka SS13 Medium Extended" :size 30)
+;;       doom-variable-pitch-font (font-spec :family "Hack" :size 19)
+;;       doom-serif-font (font-spec :family "IBM Plex Mono" :weight 'light)
+;;       )
+(setq doom-font (font-spec :family "MesloLGS NF" :size 19)
+      doom-big-font (font-spec :family "MesloLGS NF" :size 30)
       doom-variable-pitch-font (font-spec :family "Hack" :size 19)
       doom-serif-font (font-spec :family "IBM Plex Mono" :weight 'light)
       )
@@ -301,8 +304,9 @@
             '(("formal" .
               (concat
            "Ioannis Vardas\n"
+           "Treitlstraße 3, 1040 Wien\n"
            "Research Group for Parallel Computing\nFaculty of Informatics\nTechnical University of Vienna\n"
-           "T: +43-(1)-58801-191415"))
+           "T: +43-(1)-58801-191401"))
                ("informal" .
               "Ioannis\n")))))
     (message-insert-signature)))
@@ -354,7 +358,7 @@
                 (format "Prepare local buffer environment for org source block (%s)."
                         (upcase ,lang))))))))
 (defvar org-babel-lang-list
-  '("go" "python" "ipython" "bash" "sh"))
+  '("c" "python" "ipython" "bash" "sh"))
 (dolist (lang org-babel-lang-list)
   (eval `(lsp-org-babel-enable ,lang)))
 #+end_src
