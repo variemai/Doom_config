@@ -167,13 +167,16 @@
 
 ;; (setq mu4e-alert-notify-repeated-mails t)
 ;; (mu4e-alert-notify-unread-mail-async)
- (setq
-  mu4e-get-mail-command (format "INSIDE_EMACS=%s mbsync -a" emacs-version)
-  epa-pinentry-mode 'ask
-  mu4e-update-interval 120)
+ ;; (setq
+ ;;  mu4e-get-mail-command (format "INSIDE_EMACS=%s mbsync -a" emacs-version)
+ ;;  epa-pinentry-mode 'ask
+ ;;  mu4e-update-interval 120)
+(setq mu4e-get-mail-command "mbsync -a")
+(setq mu4e-update-interval 128)
+(setq mu4e-change-filenames-when-moving t)
 ;; (setq mu4e-get-mail-command (format "INSIDE_EMACS=%s mbsync -a" emacs-version)
 ;;       epa-pinentry-mode 'ask)
-(pinentry-start)
+;; (pinentry-start)
 (setq mu4e-headers-auto-update t)
 (setq mu4e-compose-signature-auto-include nil)
 (setq mu4e-maildir (expand-file-name "~/Maildir"))
@@ -206,32 +209,29 @@
 (setq mu4e-contexts
       (list
       (make-mu4e-context
-          :name "Forth"
-          :enter-func (lambda () (mu4e-message "Entering Forth context"))
-          :leave-func (lambda () (mu4e-message "Leaving Forth context"))
-          :match-func (lambda (msg)
-		 (when msg
-		    (mu4e-message-contact-field-matches
-		     msg '(:from :to :cc :bcc) "vardas@ics.forth.gr")))
-          :vars '( ( user-mail-address . "vardas@ics.forth.gr")
-                   ( user-full-name . "Ioannis Vardas")
-                   ( message-send-mail-function . smtpmail-send-it )
-                   ( smtpmail-smtp-user . "vardas@ics.forth.gr")
-                   (gnutls-min-prime-bits . 128)
-                   (smtpmail-stream-type . ssl)
-                   (smtpmail-starttls-credentials . (("enigma.ics.forth.gr" 465 nil nil)))
-                   (smtpmail-default-smtp-server . "enigma.ics.forth.gr")
-                   (smtpmail-smtp-server . "enigma.ics.forth.gr")
-	                 (smtpmail-auth-credentials  . '(expand-file-name "~/.authinfo.gpg") )
-                   (smtpmail-smtp-service . 465)
-                   (smtpmail-debug-info . t)
-                   (smtpmail-debug-verbose . t)
-                   ;; (mu4e-sent-messages-behavior 'sent)
-                   (mu4e-drafts-folder . "/forth/Drafts")
-                   (mu4e-sent-folder   . "/forth/Sent")
-                   (mu4e-refile-folder . "/forth/Archive")
-                   (mu4e-trash-folder . "/forth/Trash")
-                   ))
+       :name "TUWien"
+       :enter-func (lambda () (mu4e-message "Entering TUWien context"))
+       :leave-func (lambda () (mu4e-message "Leaving TUWien context"))
+       :match-func (lambda (msg) (when msg (mu4e-message-contact-field-matches
+                                            msg '(:from :to :cc :bcc) "vardas@par.tuwien.ac.at")))
+       :vars '( ( user-mail-address . "vardas@par.tuwien.ac.at")
+                ( user-full-name . "Ioannis Vardas")
+                ( message-send-mail-function . smtpmail-send-it )
+                ( smtpmail-smtp-user . "ivardas")
+                (gnutls-min-prime-bits . 256)
+                (smtpmail-stream-type . starttls)
+                (smtpmail-starttls-credentials . (("mail.intern.tuwien.ac.at" 587 nil nil)))
+                (smtpmail-default-smtp-server . "mail.intern.tuwien.ac.at")
+                (smtpmail-smtp-server . "mail.intern.tuwien.ac.at")
+	              (smtpmail-auth-credentials  . '(expand-file-name "~/.authinfo.gpg") )
+                (smtpmail-smtp-service . 587)
+                ;; (smtpmail-debug-info . t)
+                ;; (smtpmail-debug-verbose . t)
+                (setq mu4e-sent-messages-behavior 'sent)
+                (mu4e-trash-folder  . "/TUWien/Deleted")
+                (mu4e-drafts-folder . "/TUWien/Drafts")
+                (mu4e-sent-folder   . "/TUWien/Sent Items")
+                (mu4e-refile-folder . "/TUWien/Archive")))
 
       (make-mu4e-context
        :name "Hotmail"
@@ -259,39 +259,43 @@
                 (mu4e-refile-folder . "/hotmail/Archive")
                 ))
 
+
       (make-mu4e-context
-       :name "TUWien"
-       :enter-func (lambda () (mu4e-message "Entering TUWien context"))
-       :leave-func (lambda () (mu4e-message "Leaving TUWien context"))
-       :match-func (lambda (msg) (when msg (mu4e-message-contact-field-matches
-                                            msg '(:from :to :cc :bcc) "vardas@par.tuwien.ac.at")))
-       :vars '( ( user-mail-address . "vardas@par.tuwien.ac.at")
-                ( user-full-name . "Ioannis Vardas")
-                ( message-send-mail-function . smtpmail-send-it )
-                ( smtpmail-smtp-user . "ivardas")
-                (gnutls-min-prime-bits . 256)
-                (smtpmail-stream-type . starttls)
-                (smtpmail-starttls-credentials . (("mail.intern.tuwien.ac.at" 587 nil nil)))
-                (smtpmail-default-smtp-server . "mail.intern.tuwien.ac.at")
-                (smtpmail-smtp-server . "mail.intern.tuwien.ac.at")
-	              (smtpmail-auth-credentials  . '(expand-file-name "~/.authinfo.gpg") )
-                (smtpmail-smtp-service . 587)
-                ;; (smtpmail-debug-info . t)
-                ;; (smtpmail-debug-verbose . t)
-                (setq mu4e-sent-messages-behavior 'sent)
-                (mu4e-trash-folder  . "/TUWien/Deleted")
-                (mu4e-drafts-folder . "/TUWien/Drafts")
-                (mu4e-sent-folder   . "/TUWien/Sent Items")
-                (mu4e-refile-folder . "/TUWien/Archive")
+          :name "Forth"
+          :enter-func (lambda () (mu4e-message "Entering Forth context"))
+          :leave-func (lambda () (mu4e-message "Leaving Forth context"))
+          :match-func (lambda (msg)
+		 (when msg
+		    (mu4e-message-contact-field-matches
+		     msg '(:from :to :cc :bcc) "vardas@ics.forth.gr")))
+          :vars '( ( user-mail-address . "vardas@ics.forth.gr")
+                   ( user-full-name . "Ioannis Vardas")
+                   ( message-send-mail-function . smtpmail-send-it )
+                   ( smtpmail-smtp-user . "vardas@ics.forth.gr")
+                   (gnutls-min-prime-bits . 128)
+                   (smtpmail-stream-type . ssl)
+                   (smtpmail-starttls-credentials . (("enigma.ics.forth.gr" 465 nil nil)))
+                   (smtpmail-default-smtp-server . "enigma.ics.forth.gr")
+                   (smtpmail-smtp-server . "enigma.ics.forth.gr")
+	                 (smtpmail-auth-credentials  . '(expand-file-name "~/.authinfo.gpg") )
+                   (smtpmail-smtp-service . 465)
+                   (smtpmail-debug-info . t)
+                   (smtpmail-debug-verbose . t)
+                   ;; (mu4e-sent-messages-behavior 'sent)
+                   (mu4e-drafts-folder . "/forth/Drafts")
+                   (mu4e-sent-folder   . "/forth/Sent")
+                   (mu4e-refile-folder . "/forth/Archive")
+                   (mu4e-trash-folder . "/forth/Trash")
             ))))
 (add-to-list 'mu4e-view-actions '("ViewInBrowser" . mu4e-action-view-in-browser) t)
+(mu4e t)
 #+END_SRC
 ** Mu4e-alert
 #+BEGIN_SRC emacs-lisp
 (require 'mu4e-alert)
 (mu4e-alert-set-default-style 'libnotify)
 (add-hook 'after-init-hook #'mu4e-alert-enable-notifications)
-(add-hook 'after-init-hook #'mu4e-alert-enable-mode-line-display)
+;; (add-hook 'after-init-hook #'mu4e-alert-enable-mode-line-display)
 ;; (setq epa-pinentry-mode 'loopback)
 #+END_SRC
 ** Mu4e-signature
