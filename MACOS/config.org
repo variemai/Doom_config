@@ -1,0 +1,237 @@
+#+TITLE: Doom Emacs Config
+#+PROPERTY: header-args :emacs-lisp :tangle yes :cache yes :results silent :comments link :exports code
+* File options
+** turn on lexical binding
+#+BEGIN_SRC emacs-lisp
+;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
+#+END_SRC
+
+* Linenum
+#+BEGIN_SRC emacs-lisp
+(setq display-line-numbers-type 't)
+#+END_SRC
+* Org
+** Org Bullets
+#+BEGIN_SRC emacs-lisp
+(require 'org-bullets)
+(use-package org-bullets
+  :hook (org-mode . org-bullets-mode))
+#+END_SRC
+** Org Folder
+#+BEGIN_SRC emacs-lisp
+(setq org-directory "~/org/")
+#+END_SRC
+** Org to Latex
+#+BEGIN_SRC emacs-lisp
+
+(setq org-use-sub-superscripts nil)
+(setq org-latex-to-pdf-process
+  '("xelatex -interaction nonstopmode %f"
+     "xelatex -interaction nonstopmode %f")) ;; for multiple passes
+(setq org-latex-pdf-process (list
+   "latexmk -pdflatex='xelatex -shell-escape -interaction nonstopmode' -pdf -f  %f"))
+(require 'org-make-toc)
+#+END_SRC
+* PDF viewer
+#+begin_src emacs-lisp
+(setq +latex-viewers '(Skim pdf-tools))
+(add-to-list 'org-file-apps '("\\.pdf" . "/Applications/Skim.app/Contents/MacOS/Skim %s"))
+(after! tex
+  (add-to-list 'TeX-view-program-list '("Skim" "/Applications/Skim.app/Contents/MacOS/Skim %o"))
+  (add-to-list 'TeX-view-program-selection '(output-pdf "Skim")))
+#+end_src
+* Latex
+** Compile
+#+begin_src emacs-lisp
+(setq TeX-save-query nil
+      TeX-show-compilation t
+      TeX-command-extra-options "-shell-escape")
+(after! latex
+  (add-to-list 'TeX-command-list '("XeLaTeX" "%`xelatex%(mode)%' %t" TeX-run-TeX nil t)))
+(after! latex
+  (add-to-list 'TeX-command-list '("XeLatexMk" "%`latexmk -pdflatex='xelatex -interaction nonstopmode' -pdf -f%(mode)%' %t" TeX-run-TeX nil t)))
+#+end_src
+* Appearance
+** Font
+#+BEGIN_SRC emacs-lisp
+;; Doom exposes five (optional) variables for controlling fonts in Doom. Here
+;; are the three important ones:
+;;
+;; + `doom-font'
+;; + `doom-variable-pitch-font'
+;; + `doom-big-font' -- used for `doom-big-font-mode'; use this for
+;;   presentations or streaming.
+;;
+;; They all accept either a font-spec, font string ("Input Mono-12"), or xlfd
+;; font string. You generally only need these two:
+;; (setq doom-font (font-spec :family "Iosevka SS13 Medium Extended" :size 19)
+;;       doom-big-font (font-spec :family "Iosevka SS13 Medium Extended" :size 30)
+;;       doom-variable-pitch-font (font-spec :family "Hack" :size 19)
+;;       doom-serif-font (font-spec :family "IBM Plex Mono" :weight 'light)
+;;       "MesloLGS NF")
+(setq doom-font (font-spec :family "Iosevka SS04 Extended" :size 14 :weight 'regular)
+      doom-big-font (font-spec :family "MesloLGS NF" :size 25)
+      doom-variable-pitch-font (font-spec :family "MesloLGS NF" :size 14)
+      doom-serif-font (font-spec :family "MesloLGS NF" :weight 'light)
+      )
+#+END_SRC
+** Theme
+#+BEGIN_SRC emacs-lisp
+;; There are two ways to load a theme. Both assume the theme is installed and
+;; available. You can either set `doom-theme' or manually load a theme with the
+;; `load-theme' function. This is the default:
+ (setq doom-theme 'doom-vibrant)
+#+END_SRC
+** Fullscreen
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'default-frame-alist '(fullscreen . maximized))
+#+END_SRC
+** Beacon
+#+BEGIN_SRC emacs-lisp
+(require 'beacon)
+(setq beacon-mode 1)
+#+END_SRC
+* Evil Mode
+#+BEGIN_SRC emacs-lisp
+(require 'evil-multiedit)
+;; Highlights all matches of the selection in the buffer.
+(setq evil-want-C-u-scroll nil
+            evil-want-C-d-scroll nil)
+(defvar evil-multiedit-state-map (make-sparse-keymap))
+(defvar evil-multiedit-insert-state-map (make-sparse-keymap))
+(define-key evil-visual-state-map "R" 'evil-multiedit-match-all)
+
+;; Match the word under cursor (i.e. make it an edit region). Consecutive presses will
+;; incrementally add the next unmatched match.
+(define-key evil-normal-state-map (kbd "M-d") 'evil-multiedit-match-and-next)
+;; Match selected region.
+(define-key evil-visual-state-map (kbd "M-d") 'evil-multiedit-match-and-next)
+;; Insert marker at point
+(define-key evil-insert-state-map (kbd "M-d") 'evil-multiedit-toggle-marker-here)
+
+;; Same as M-d but in reverse.
+(define-key evil-normal-state-map (kbd "M-D") 'evil-multiedit-match-and-prev)
+(define-key evil-visual-state-map (kbd "M-D") 'evil-multiedit-match-and-prev)
+
+;; OPTIONAL: If you prefer to grab symbols rather than words, use
+;; `evil-multiedit-match-symbol-and-next` (or prev).
+
+;; Restore the last group of multiedit regions.
+(define-key evil-visual-state-map (kbd "C-M-D") 'evil-multiedit-restore)
+
+;; RET will toggle the region under the cursor
+(define-key evil-multiedit-state-map (kbd "RET") 'evil-multiedit-toggle-or-restrict-region)
+
+;; ...and in visual mode, RET will disable all fields outside the selected region
+(define-key evil-motion-state-map (kbd "RET") 'evil-multiedit-toggle-or-restrict-region)
+
+;; For moving between edit regions
+(define-key evil-multiedit-state-map (kbd "C-n") 'evil-multiedit-next)
+(define-key evil-multiedit-state-map (kbd "C-p") 'evil-multiedit-prev)
+(define-key evil-multiedit-insert-state-map (kbd "C-n") 'evil-multiedit-next)
+(define-key evil-multiedit-insert-state-map (kbd "C-p") 'evil-multiedit-prev)
+
+;; Ex command that allows you to invoke evil-multiedit with a regular expression, e.g.
+(evil-ex-define-cmd "ie[dit]" 'evil-multiedit-ex-match)
+
+;; Hotkeys for multiple edit
+;; D: clear the region
+;; C: clear to end-of-region and go into insert mode
+;; A: go into insert mode at end-of-region
+;; I: go into insert mode at start-of-region
+;; V: select the region
+;; $: go to end-of-region
+;; 0/^: go to start-of-region
+;; gg/G: go to the first/last region
+
+#+END_SRC
+* Custom Keys
+** Eshell
+#+BEGIN_SRC emacs-lisp
+(global-set-key (kbd "C-x t") 'vterm)
+(when (memq window-system '(mac ns x))
+  (exec-path-from-shell-initialize))
+#+END_SRC
+** Lsp
+#+BEGIN_SRC emacs-lisp
+(global-set-key (kbd "C-c e") 'lsp-find-definition)
+(global-set-key (kbd "C-c r") 'lsp-find-references)
+(global-set-key (kbd "C-c d") 'lsp-find-declaration)
+(global-set-key (kbd "C-c t") 'lsp-find-implementation)
+(global-set-key (kbd "C-c f") 'lsp-find-type-definition)
+#+END_SRC
+** MACOS
+#+BEGIN_SRC emacs-lisp
+(global-set-key (kbd "<s-mouse-3>") 'flyspell-correct-word)
+#+END_SRC
+* Mail and Mu4e
+
+* Diary
+#+BEGIN_SRC emacs-lisp
+;; Diary configs
+(setq appt-active 1)
+(setq diary-number-of-entries 6)
+(setq org-agenda-include-diary t)
+(setq appt-message-warning-time 12)
+(setq appt-display-interval 4)
+(setq appt-audible 1)
+#+END_SRC
+* Flyspell
+#+BEGIN_SRC emacs-lisp
+(add-hook 'text-mode-hook 'flyspell-mode)
+(add-hook 'org-mode-hook  'flyspell-mode)
+#+END_SRC
+* LSP
+** LSP in buffers
+#+begin_src emacs-lisp
+(cl-defmacro lsp-org-babel-enable (lang) ;
+  "Support LANG in org source code block."
+  (setq centaur-lsp 'lsp-mode)
+  (cl-check-type lang stringp)
+  (let* ((edit-pre (intern (format "org-babel-edit-prep:%s" lang)))
+         (intern-pre (intern (format "lsp--%s" (symbol-name edit-pre)))))
+    `(progn
+       (defun ,intern-pre (info)
+         (let ((file-name (->> info caddr (alist-get :file))))
+           (unless file-name
+             (setq file-name (make-temp-file "babel-lsp-")))
+           (setq buffer-file-name file-name)
+           (lsp-deferred)))
+       (put ',intern-pre 'function-documentation
+            (format "Enable lsp-mode in the buffer of org source block (%s)."
+                    (upcase ,lang)))
+       (if (fboundp ',edit-pre)
+           (advice-add ',edit-pre :after ',intern-pre)
+         (progn
+           (defun ,edit-pre (info)
+             (,intern-pre info))
+           (put ',edit-pre 'function-documentation
+                (format "Prepare local buffer environment for org source block (%s)."
+                        (upcase ,lang))))))))
+(defvar org-babel-lang-list
+  '("c" "python" "ipython" "bash" "sh"))
+(dolist (lang org-babel-lang-list)
+  (eval `(lsp-org-babel-enable ,lang)))
+#+end_src
+** Python
+#+BEGIN_SRC emacs-lisp
+(after! lsp-python-ms
+  (set-lsp-priority! 'mspyls 1))
+
+#+END_SRC
+* ISPELL
+#+begin_src emacs-lisp
+(ispell-change-dictionary "en_GB" t)
+#+end_src
+* COMMENT Flycheck
+#+begin_src emacs-lisp
+(add-hook 'flycheck-after-syntax-check-hook
+          (lambda  ()
+            (if flycheck-current-errors
+                (flycheck-list-errors)
+              (when (get-buffer "*Flycheck errors*")
+                (switch-to-buffer "*Flycheck errors*")
+                (kill-buffer (current-buffer))
+                (delete-window)))))
+(add-hook 'python-mode-hook 'flymake-python-pyflakes-load)
+#+end_src
