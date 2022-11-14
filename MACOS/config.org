@@ -5,10 +5,19 @@
 #+BEGIN_SRC emacs-lisp
 ;;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
 #+END_SRC
+* Beacon
+#+begin_src emacs-lisp
+(beacon-mode 1)
+(setq beacon-blink-duration 0.5)
+(setq beacon-blink-when-point-moves-horizontally 1)
+(setq beacon-blink-when-window-scrolls 1)
+(setq beacon-blink-when-point-moves-vertically 1)
+#+end_src
 
-* Linenum
+* Linenum and Visual Line
 #+BEGIN_SRC emacs-lisp
 (setq display-line-numbers-type 't)
+(global-visual-line-mode 1)
 #+END_SRC
 * Org
 ** Org Bullets
@@ -24,13 +33,13 @@
 ** Org to Latex
 #+BEGIN_SRC emacs-lisp
 
-(setq org-use-sub-superscripts nil)
-(setq org-latex-to-pdf-process
-  '("xelatex -interaction nonstopmode %f"
-     "xelatex -interaction nonstopmode %f")) ;; for multiple passes
-(setq org-latex-pdf-process (list
-   "latexmk -pdflatex='xelatex -shell-escape -interaction nonstopmode' -pdf -f  %f"))
-(require 'org-make-toc)
+;; (setq org-use-sub-superscripts nil)
+;; (setq org-latex-to-pdf-process
+;;   '("xelatex -interaction nonstopmode %f"
+;;      "xelatex -interaction nonstopmode %f")) ;; for multiple passes
+;; (setq org-latex-pdf-process (list
+;;    "latexmk -pdflatex='xelatex -shell-escape -interaction nonstopmode' -pdf -f  %f"))
+;; (require 'org-make-toc)
 #+END_SRC
 * PDF viewer
 #+begin_src emacs-lisp
@@ -51,6 +60,12 @@
 (after! latex
   (add-to-list 'TeX-command-list '("XeLatexMk" "%`latexmk -pdflatex='xelatex -interaction nonstopmode' -pdf -f%(mode)%' %t" TeX-run-TeX nil t)))
 #+end_src
+** Autofill
+# Without this mode the newlines in the tex file are not following the real document
+# Therefore we have a stupid incoherent formatting of tex file
+#+begin_src emacs-lisp
+(add-hook 'LaTeX-mode-hook #'turn-on-auto-fill)
+#+end_src
 * Appearance
 ** Font
 #+BEGIN_SRC emacs-lisp
@@ -64,39 +79,52 @@
 ;;
 ;; They all accept either a font-spec, font string ("Input Mono-12"), or xlfd
 ;; font string. You generally only need these two:
-;; (setq doom-font (font-spec :family "Iosevka SS13 Medium Extended" :size 19)
-;;       doom-big-font (font-spec :family "Iosevka SS13 Medium Extended" :size 30)
-;;       doom-variable-pitch-font (font-spec :family "Hack" :size 19)
-;;       doom-serif-font (font-spec :family "IBM Plex Mono" :weight 'light)
-;;       "MesloLGS NF")
-(setq doom-font (font-spec :family "Iosevka SS04 Extended" :size 14 :weight 'regular)
-      doom-big-font (font-spec :family "MesloLGS NF" :size 25)
-      doom-variable-pitch-font (font-spec :family "MesloLGS NF" :size 14)
-      doom-serif-font (font-spec :family "MesloLGS NF" :weight 'light)
+;; (setq doom-font (font-spec :family "Fira Code" :size 14)
+(setq doom-font (font-spec :family "Berkeley Mono Variable" :size 16 :weight 'regular)
+      doom-big-font (font-spec :family "Berkeley Mono Variable" :size 25 :weight 'regular)
+      doom-variable-pitch-font (font-spec :family "Berkeley Mono Variable" :size 16)
+      doom-serif-font (font-spec :family "Berkeley Mono" :weight 'light)
       )
+
 #+END_SRC
 ** Theme
 #+BEGIN_SRC emacs-lisp
 ;; There are two ways to load a theme. Both assume the theme is installed and
 ;; available. You can either set `doom-theme' or manually load a theme with the
 ;; `load-theme' function. This is the default:
- (setq doom-theme 'doom-vibrant)
+ ;;(setq doom-theme 'doom-palenight)
+ (setq doom-theme 'doom-xcode)
 #+END_SRC
 ** Fullscreen
 #+BEGIN_SRC emacs-lisp
+(setq frame-resize-pixelwise t)
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
 #+END_SRC
-** Beacon
+** COMMENT Beacon
 #+BEGIN_SRC emacs-lisp
-(require 'beacon)
-(setq beacon-mode 1)
+;; (require 'nav-flash)
+;; (nav-flash-show)
+;; (require 'beacon)
+;; (beacon-mode 1)
+;; (setq beacon-blink-when-focused t)
+;; (setq beacon-blink-when-point-moves-vertically t)
+;; (setq beacon-blink-when-window-scrolls t)
+;; (setq beacon-blink-duration 0.5)
+;; (setq beacon-push-mark 35)
+;; (setq beacon-blink-delay 0.2)
 #+END_SRC
+
+
+* Iedit
+#+begin_src emacs-lisp
+(global-key-binding (kbd "C-9") 'iedit-rectangle-mode)
+#+end_src
 * Evil Mode
 #+BEGIN_SRC emacs-lisp
 (require 'evil-multiedit)
 ;; Highlights all matches of the selection in the buffer.
-(setq evil-want-C-u-scroll nil
-            evil-want-C-d-scroll nil)
+;; (setq evil-want-C-u-scroll nil
+;;             evil-want-C-d-scroll nil)
 (defvar evil-multiedit-state-map (make-sparse-keymap))
 (defvar evil-multiedit-insert-state-map (make-sparse-keymap))
 (define-key evil-visual-state-map "R" 'evil-multiedit-match-all)
@@ -148,7 +176,7 @@
 * Custom Keys
 ** Eshell
 #+BEGIN_SRC emacs-lisp
-(global-set-key (kbd "C-x t") 'vterm)
+(global-set-key (kbd "C-x t") 'eshell)
 (when (memq window-system '(mac ns x))
   (exec-path-from-shell-initialize))
 #+END_SRC
@@ -159,13 +187,12 @@
 (global-set-key (kbd "C-c d") 'lsp-find-declaration)
 (global-set-key (kbd "C-c t") 'lsp-find-implementation)
 (global-set-key (kbd "C-c f") 'lsp-find-type-definition)
+(setq lsp-enable-file-watchers nil)
 #+END_SRC
 ** MACOS
 #+BEGIN_SRC emacs-lisp
 (global-set-key (kbd "<s-mouse-3>") 'flyspell-correct-word)
 #+END_SRC
-* Mail and Mu4e
-
 * Diary
 #+BEGIN_SRC emacs-lisp
 ;; Diary configs
@@ -219,9 +246,14 @@
   (set-lsp-priority! 'mspyls 1))
 
 #+END_SRC
-* ISPELL
+* COMMENT ISPELL
 #+begin_src emacs-lisp
 (ispell-change-dictionary "en_GB" t)
+#+end_src
+* Langtool
+#+begin_src emacs-lisp
+(require 'langtool)
+(setq langtool-language-tool-jar "/Users/ioannisvardas/repos/languagetool/languagetool-standalone/target/LanguageTool-5.8-SNAPSHOT/LanguageTool-5.8-SNAPSHOT/languagetool-commandline.jar")
 #+end_src
 * COMMENT Flycheck
 #+begin_src emacs-lisp
@@ -234,4 +266,17 @@
                 (kill-buffer (current-buffer))
                 (delete-window)))))
 (add-hook 'python-mode-hook 'flymake-python-pyflakes-load)
+#+end_src
+* COMMENT Aspell
+#+begin_src emacs-lisp
+(setq ispell-program-name "aspell")
+(setq ispell-extra-args '("--sug-mode=ultra" "--lang=en_US"))
+(setq spell-fu-directory "~/STORE/dictionary") ;; Please create this directory manually.
+(setq ispell-personal-dictionary "~/STORE/dictionary/.pws")
+#+end_src
+* Hide-Show
+#+begin_src emacs-lisp
+(add-hook 'c-mode-hook   'hs-minor-mode)
+(add-hook 'c++-mode-hook   'hs-minor-mode)
+(add-hook 'LaTex-mode-hook 'hs-minor-mode)
 #+end_src

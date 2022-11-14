@@ -14,8 +14,8 @@
 ;;      Alternatively, press 'gd' (or 'C-c g d') on a module to browse its
 ;;      directory (for easy access to its source code).
 
-(setq evil-want-C-u-scroll nil
-            evil-want-C-d-scroll nil)
+;;(setq evil-want-C-u-scroll nil
+;;            evil-want-C-d-scroll nil)
 
 (doom! :input
        ;;chinese
@@ -25,7 +25,8 @@
        company        ; the ultimate code completion backend
        ;;helm              ; the *other* search engine for love and life
        ;;ido               ; the other *other* search engine...
-       ivy               ; a search engine for love and life
+       ;;ivy               ; a search engine for love and life
+       vertico                  ;
 
        :ui
        ;;deft              ; notational velocity for Emacs
@@ -37,8 +38,8 @@
        ;;hydra
        ;;indent-guides     ; highlighted indent columns
        modeline          ; snazzy, Atom-inspired modeline, plus API
-       nav-flash         ; blink the current line after jumping
-       neotree           ; a project drawer, like NERDTree for vim
+       ;;nav-flash         ; blink the current line after jumping
+       ;;neotree           ; a project drawer, like NERDTree for vim
        ophints           ; highlight the region an operation acts on
        (popup +defaults)   ; tame sudden yet inevitable temporary windows
        ;;pretty-code       ; ligatures or substitute text with pretty symbols
@@ -50,7 +51,7 @@
        window-select     ; visually switch windows
        ;;workspaces        ; tab emulation, persistence & separate workspaces
        ;;zen               ; distraction-free coding or writing
-       ;;minimap
+       minimap
 
        :editor
        (evil +everywhere); come to the dark side, we have cookies
@@ -81,12 +82,13 @@
        ;;gtags
 
        :checkers
-       ;;syntax              ; tasing you for every semicolon you forget
-       ;;spell             ; tasing you for misspelling mispelling
-       ;;grammar           ; tasing grammar mistake every you make
+       (syntax +childframe)            ; tasing you for every semicolon you forget
+       (spell +flyspell)             ; tasing you for misspelling mispelling
+       (grammar +lsp)           ; tasing grammar mistake every you make
 
        :os
-       macos
+       (:if IS-MAC macos)  ; improve compatibility with macOS
+       ;;macos
 
        :tools
        ;;ansible
@@ -99,7 +101,6 @@
        ;;gist              ; interacting with github gists
        lookup              ; navigate your code and its documentation
        lsp
-       ;;macos             ; MacOS-specific commands
        magit             ; a git porcelain for Emacs
        make              ; run make tasks from Emacs
        ;;pass              ; password manager for nerds
@@ -112,9 +113,8 @@
 
        :lang
        ;;agda              ; types of types of types of types...
-       assembly          ; assembly for fun or debugging
-       (cc +lsp)                ; C/C++/Obj-C madness
-       (cmake +lsp)
+       ;;assembly          ; assembly for fun or debugging
+       (cc +lsp)            ; C > C++ == 1
        ;;clojure           ; java with a lisp
        ;;common-lisp       ; if you've seen one lisp, you've seen them all
        ;;coq               ; proofs-as-programs
@@ -135,13 +135,13 @@
        ;;hy                ; readability of scheme w/ speed of python
        ;;idris             ;
        ;;(java +meghanada) ; the poster child for carpal tunnel syndrome
-       ;;javascript        ; all(hope(abandon(ye(who(enter(here))))))
+       (javascript +lsp)       ; all(hope(abandon(ye(who(enter(here))))))
+       (json +lsp)
        ;;julia             ; a better, faster MATLAB
        ;;kotlin            ; a better, slicker Java(Script)
        (latex
         +latexmk
         +cdlatex
-        +fold
         +lsp)
                         ; writing papers in Emacs has never been so fun
 
@@ -177,7 +177,7 @@
        ;;terra             ; Earth and Moon in alignment for performance.
        ;;web               ; the tubes
        yaml
-       csv
+       ;;csv
 
        :email
        ;;mu4e
@@ -193,4 +193,3 @@
        :config
        literate
        (default +bindings +smartparens))
-(setq frame-resize-pixelwise t)
